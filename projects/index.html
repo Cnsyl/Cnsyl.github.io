@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="description" content="展示新作品，记录开发、设计与创作过程。"><meta name="author" content="cnsyl"><meta name="theme-color" content="#050816"><title>作品展示 | Cnsyl Build</title><link rel="shortcut icon" href="/img/favicon.ico"><link rel="stylesheet" href="/css/cyber.css"><meta name="generator" content="Hexo 7.3.0"></head><body><canvas class="cyber-canvas" id="cyber-canvas" aria-hidden="true"></canvas><div class="cyber-cursor-glow" aria-hidden="true"></div><div class="site-shell"><header class="cyber-nav"><a class="brand" href="/"><span class="brand-mark">C</span><span class="brand-text"><strong>Cnsyl Build</strong><small>作品展示与创作记录</small></span></a><nav class="nav-links"><a href="/">首页</a><a href="/learning/">学习记录</a><a href="/projects/">作品展示</a><a href="/life/">个人记录</a><a href="/about/">关于我</a></nav></header><main class="site-main"><div class="lobster-landing">
+  <section class="lobster-hero lobster-section">
+    <div class="lobster-hero-copy">
+      <div class="lobster-kicker">AI HARDWARE TERMINAL · RASPBERRY PI 5</div>
+      <h1>Lobster Dashboard</h1>
+      <p class="lobster-lead">把 7 寸小屏、树莓派、WM8960 Audio HAT 和 OpenClaw Agent 组合成一个会听、会说、会思考、会变表情的桌面 AI 终端。</p>
+      <div class="lobster-actions">
+        <a href="#features">查看功能矩阵</a>
+        <a href="#architecture">硬件架构</a>
+      </div>
+    </div>
+    <div class="lobster-visual-stage">
+      <div class="lobster-product-shot lobster-visual-card">
+        <span class="lobster-hud-label">LIVE DASHBOARD</span>
+        <img src="/img/projects/lobster-dashboard-screen.png" alt="Lobster Dashboard 运行界面截图">
+      </div>
+      <div class="lobster-device-card lobster-visual-card">
+        <span class="lobster-hud-label">RPI + WM8960</span>
+        <img src="/img/projects/lobster-dashboard-hardware.jpg" alt="Raspberry Pi 5 与 WM8960 Audio HAT 硬件照片">
+      </div>
+    </div>
+  </section>
+
+  <section class="lobster-stats lobster-section">
+    <div><strong>Raspberry Pi 5</strong><span>8GB 本地运行</span></div>
+    <div><strong>7 寸 HDMI</strong><span>桌面常驻小屏</span></div>
+    <div><strong>WM8960</strong><span>录音与播放链路</span></div>
+    <div><strong>OpenClaw</strong><span>本地 Agent 对话</span></div>
+    <div><strong>Voice UI</strong><span>STT + TTS 闭环</span></div>
+  </section>
+
+  <section id="features" class="lobster-section">
+    <div class="lobster-section-head">
+      <div class="lobster-kicker">FEATURE MATRIX</div>
+      <h2>项目亮点</h2>
+      <p>它不只是一个网页面板，而是一个围绕小屏硬件、语音链路和本地 Agent 设计的交互设备。</p>
+    </div>
+    <div class="lobster-feature-grid">
+      <article class="lobster-feature-card"><span>01</span><h3>全屏 Kiosk</h3><p>支持 Chromium Kiosk 全屏运行和 systemd 开机自启，适合作为桌面常驻终端。</p></article>
+      <article class="lobster-feature-card"><span>02</span><h3>本地 Agent</h3><p>通过 OpenClaw CLI 接入对话能力，带 pending 状态、限流和单飞控制。</p></article>
+      <article class="lobster-feature-card"><span>03</span><h3>语音闭环</h3><p>从麦克风录音、STT 识别、发送给 Agent，到 TTS 合成和扬声器播放。</p></article>
+      <article class="lobster-feature-card"><span>04</span><h3>情绪角色</h3><p>Lobster Emoji 会根据对话内容切换开心、思考、工作、难过、酷等状态。</p></article>
+      <article class="lobster-feature-card"><span>05</span><h3>模型路由</h3><p>提供 auto / fast / strong 模式，根据问题复杂度自动选择更快或更强的模型。</p></article>
+      <article class="lobster-feature-card"><span>06</span><h3>中文输入</h3><p>支持 Fcitx5 输入法切换，并提供网页内置拼音候选作为 fallback。</p></article>
+    </div>
+  </section>
+
+  <section id="architecture" class="lobster-section lobster-architecture">
+    <div class="lobster-section-head">
+      <div class="lobster-kicker">SYSTEM FLOW</div>
+      <h2>从硬件到 Agent 的链路</h2>
+    </div>
+    <div class="lobster-architecture-line">
+      <div class="lobster-architecture-step"><strong>Hardware</strong><span>Raspberry Pi 5 / HDMI / WM8960</span></div>
+      <div class="lobster-architecture-step"><strong>Local Server</strong><span>Python HTTP API</span></div>
+      <div class="lobster-architecture-step"><strong>OpenClaw</strong><span>Agent CLI + Model Route</span></div>
+      <div class="lobster-architecture-step"><strong>Voice I/O</strong><span>arecord / STT / TTS / aplay</span></div>
+      <div class="lobster-architecture-step"><strong>Dashboard</strong><span>Emotion UI + Kiosk</span></div>
+    </div>
+  </section>
+
+  <section class="lobster-section lobster-gallery">
+    <div class="lobster-section-head">
+      <div class="lobster-kicker">REAL BUILD</div>
+      <h2>实机展示</h2>
+      <p>运行界面和硬件连接都来自当前实际搭建环境。</p>
+    </div>
+    <div class="lobster-gallery-grid">
+      <figure>
+        <img src="/img/projects/lobster-dashboard-screen.png" alt="Lobster Dashboard 运行界面">
+        <figcaption>Dashboard 运行界面：日历、天气、系统状态、对话区和情绪化 Lobster。</figcaption>
+      </figure>
+      <figure>
+        <img src="/img/projects/lobster-dashboard-hardware.jpg" alt="树莓派与 WM8960 Audio HAT">
+        <figcaption>Raspberry Pi 5 + 微雪 WM8960 Audio HAT，负责本地音频输入输出。</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="lobster-section lobster-roadmap">
+    <div class="lobster-section-head">
+      <div class="lobster-kicker">NEXT ITERATION</div>
+      <h2>后续计划</h2>
+    </div>
+    <ul>
+      <li>优化 7 寸屏幕上的字体、布局和触控体验</li>
+      <li>继续提升语音输入稳定性和抗噪表现</li>
+      <li>增加更多硬件状态展示和设备控制能力</li>
+      <li>整理完整部署流程和源码结构说明</li>
+      <li>让 Lobster 的情绪反馈更加自然</li>
+    </ul>
+  </section>
+</div>
+</main><footer class="cyber-footer"><div class="footer-line"></div><p>© 2026 cnsyl · https://cnsylbuild.top</p><p>Building tiny things with big curiosity.</p></footer></div><script src="/js/cyber.js"></script></body></html>
