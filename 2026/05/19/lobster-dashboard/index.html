@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="description" content="展示新作品，记录开发、设计与创作过程。"><meta name="author" content="cnsyl"><meta name="theme-color" content="#050816"><title>我做了一个会说话、会思考、会变表情的树莓派 Dashboard | Cnsyl Build</title><link rel="shortcut icon" href="/img/favicon.ico"><link rel="stylesheet" href="/css/cyber.css"><meta name="generator" content="Hexo 7.3.0"></head><body><canvas class="cyber-canvas" id="cyber-canvas" aria-hidden="true"></canvas><div class="cyber-cursor-glow" aria-hidden="true"></div><div class="site-shell"><header class="cyber-nav"><a class="brand" href="/"><span class="brand-mark">C</span><span class="brand-text"><strong>Cnsyl Build</strong><small>作品展示与创作记录</small></span></a><nav class="nav-links"><a href="/">首页</a><a href="/learning/">学习记录</a><a href="/projects/">作品展示</a><a href="/life/">个人记录</a><a href="/about/">关于我</a></nav></header><main class="site-main"><article class="content-panel post-panel cyber-reveal"><header class="content-header"><div class="eyebrow">ARTICLE</div><h1>我做了一个会说话、会思考、会变表情的树莓派 Dashboard</h1><div class="post-meta"><time datetime="2026-05-18T16:00:00.000Z">2026-05-19</time><span>作品展示</span></div></header><div class="article-content"><p>这是我准备放到博客里的第一个作品：<strong>Lobster Dashboard</strong>。</p>
+<p>它是一个运行在 Raspberry Pi 5 8GB 上的智能桌面仪表盘，搭配 7 寸 HDMI 屏幕和微雪 WM8960 Audio HAT，支持 OpenClaw 本地对话、语音输入、语音播放、情绪化 Emoji、模型自动切换、中文输入、系统监控和 Kiosk 开机自启。</p>
+<h2 id="为什么做这个项目"><a href="#为什么做这个项目" class="headerlink" title="为什么做这个项目"></a>为什么做这个项目</h2><p>我一直很喜欢电子产品，也喜欢把软件和硬件组合成一个真的可以放在桌面上运行的小东西。</p>
+<p>这个项目的目标不是做一个普通网页，而是把树莓派、小屏幕、音频模块和 AI Agent 组合成一个桌面交互终端：它可以显示状态，可以听我说话，可以把回复读出来，也可以通过表情反馈当前的“情绪”。</p>
+<h2 id="硬件配置"><a href="#硬件配置" class="headerlink" title="硬件配置"></a>硬件配置</h2><ul>
+<li>Raspberry Pi 5 8GB</li>
+<li>7 寸 HDMI 显示屏</li>
+<li>微雪 WM8960 Audio HAT</li>
+<li>麦克风 &#x2F; 扬声器音频链路</li>
+</ul>
+<h2 id="它能做什么"><a href="#它能做什么" class="headerlink" title="它能做什么"></a>它能做什么</h2><p>Lobster Dashboard 目前包含这些功能：</p>
+<ul>
+<li>时间和日历显示</li>
+<li>本地待办事项</li>
+<li>实时天气</li>
+<li>CPU &#x2F; 内存 &#x2F; 磁盘 &#x2F; 温度 &#x2F; 运行时间监控</li>
+<li>网络和电源状态显示</li>
+<li>风扇状态与档位控制</li>
+<li>OpenClaw 本地对话</li>
+<li>语音录音和语音识别</li>
+<li>TTS 语音播放</li>
+<li>情绪化 Lobster Emoji</li>
+<li>中文输入法切换</li>
+<li>网页内置拼音输入 fallback</li>
+<li>Chromium Kiosk 全屏启动</li>
+<li>systemd 开机自启</li>
+</ul>
+<h2 id="技术架构"><a href="#技术架构" class="headerlink" title="技术架构"></a>技术架构</h2><p>这个项目没有使用复杂的前端框架，整体结构比较直接：</p>
+<ul>
+<li>前端：HTML &#x2F; CSS &#x2F; Vanilla JavaScript</li>
+<li>后端：Python 3 标准库 HTTP Server</li>
+<li>Agent：OpenClaw CLI</li>
+<li>语音录制：ALSA <code>arecord</code></li>
+<li>语音播放：ALSA <code>aplay</code></li>
+<li>TTS：edge-tts &#x2F; espeak-ng</li>
+<li>STT：sherpa-onnx &#x2F; whisper.cpp &#x2F; OpenAI-compatible API</li>
+<li>输入法：Fcitx5 + 内置拼音 IME fallback</li>
+<li>部署：Chromium Kiosk + systemd</li>
+</ul>
+<p>前端负责界面展示和交互，后端负责提供本地 API，包括天气、系统状态、风扇控制、OpenClaw 对话、语音录制、语音识别、TTS、输入法切换和拼音候选。</p>
+<h2 id="项目亮点"><a href="#项目亮点" class="headerlink" title="项目亮点"></a>项目亮点</h2><h3 id="软硬件一体化"><a href="#软硬件一体化" class="headerlink" title="软硬件一体化"></a>软硬件一体化</h3><p>这个项目是围绕 Raspberry Pi 5、小尺寸 HDMI 屏幕和 WM8960 Audio HAT 来设计的。它不是只在电脑浏览器里跑的 Demo，而是面向真实桌面设备的 Kiosk 应用。</p>
+<p>通过 <code>start.sh</code> 可以启动全屏 Chromium Kiosk，通过 <code>systemd</code> 可以设置开机自启，让它更像一个独立的小设备。</p>
+<h3 id="OpenClaw-本地-Agent-集成"><a href="#OpenClaw-本地-Agent-集成" class="headerlink" title="OpenClaw 本地 Agent 集成"></a>OpenClaw 本地 Agent 集成</h3><p>Dashboard 通过本地 OpenClaw CLI 发起对话，并且做了 pending 状态、单飞控制和发送限流，避免在树莓派上同时启动多个消耗较大的 Agent turn。</p>
+<p>用户输入后，界面会先显示 Lobster 正在思考，后端异步执行本地 Agent，再把结果展示回界面。</p>
+<h3 id="模型智能路由"><a href="#模型智能路由" class="headerlink" title="模型智能路由"></a>模型智能路由</h3><p>项目支持 <code>auto / fast / strong</code> 三种模型模式。</p>
+<p>在 <code>auto</code> 模式下，系统会根据输入内容自动判断使用快模型还是强模型。比如涉及代码、调试、Linux、systemd、架构、优化等关键词，或者消息较长时，会自动路由到更强的模型；普通短问题则优先使用更快的模型。</p>
+<h3 id="语音交互闭环"><a href="#语音交互闭环" class="headerlink" title="语音交互闭环"></a>语音交互闭环</h3><p>语音输入采用手动触发方式：点击麦克风开始录音，再点一次停止录音。</p>
+<p>停止后可以选择直接识别并发送给 Lobster，也可以先识别到输入框里确认。后端会通过 <code>arecord</code> 录音，分析 WAV 的 RMS 和 Peak，并把音频处理成适合 STT 的格式。</p>
+<p>语音输出部分支持 TTS 合成和本地播放，可以把 Lobster 的回复读出来。这样就形成了从“说话 → 识别 → Agent 回复 → 朗读”的完整闭环。</p>
+<h3 id="情绪化-Lobster-角色"><a href="#情绪化-Lobster-角色" class="headerlink" title="情绪化 Lobster 角色"></a>情绪化 Lobster 角色</h3><p>界面中央的 Lobster 不只是装饰，它会根据对话和状态变化切换心情。</p>
+<p>比如：</p>
+<ul>
+<li>pending 时显示思考状态</li>
+<li>提到笑话或开心内容时变开心</li>
+<li>遇到分析类问题时变思考</li>
+<li>处理任务时进入工作状态</li>
+<li>出现难过、困惑、生气等语义时切换对应情绪</li>
+</ul>
+<p>这种情绪化反馈让 Dashboard 更像一个有性格的小终端，而不只是普通信息面板。</p>
+<h3 id="中文输入专项适配"><a href="#中文输入专项适配" class="headerlink" title="中文输入专项适配"></a>中文输入专项适配</h3><p>树莓派 + Chromium + 小屏幕的中文输入并不总是稳定，所以项目同时做了两层支持：</p>
+<p>第一层是通过 <code>fcitx5-remote</code> 控制系统输入法，在中文和英文之间切换。</p>
+<p>第二层是网页内置的拼音输入 fallback，通过页面里的拼音候选面板和后端候选词接口，在系统输入法不好用时也能输入中文。</p>
+<h3 id="系统监控和硬件控制"><a href="#系统监控和硬件控制" class="headerlink" title="系统监控和硬件控制"></a>系统监控和硬件控制</h3><p>Dashboard 还集成了天气、CPU、内存、磁盘、温度、运行时间、网络、电源和风扇状态。</p>
+<p>在树莓派上，它还会尝试读取 PMIC 电源信息，用来估算板子功耗。风扇也可以通过页面 API 控制档位。</p>
+<h3 id="本地-API-安全控制"><a href="#本地-API-安全控制" class="headerlink" title="本地 API 安全控制"></a>本地 API 安全控制</h3><p>控制类 POST API 加了本地 token 和 loopback 限制。</p>
+<p>Dashboard 页面会从同源的 <code>/api/client-config</code> 获取 token，请求敏感接口时带上 <code>X-Lobster-Token</code>。这样可以减少局域网里其他设备误触发语音、TTS、风扇或 OpenClaw 调用的风险。</p>
+<h2 id="后续计划"><a href="#后续计划" class="headerlink" title="后续计划"></a>后续计划</h2><p>接下来我想继续完善这些部分：</p>
+<ul>
+<li>补充实际运行照片和界面截图</li>
+<li>优化 7 寸屏幕上的布局、字体和触控体验</li>
+<li>继续调整语音输入的稳定性</li>
+<li>增加更多硬件状态展示</li>
+<li>整理完整的部署流程</li>
+<li>根据长期使用体验优化 Lobster 的情绪反馈</li>
+</ul>
+<p>这个项目对我来说是一次把 AI、树莓派、小屏幕和语音交互组合起来的实验。它还不完美，但已经是一个可以真实运行、可以继续迭代的小作品。</p>
+</div><div class="tag-row post-tags"><a href="/tags/Raspberry-Pi/">#Raspberry Pi</a><a href="/tags/OpenClaw/">#OpenClaw</a><a href="/tags/Dashboard/">#Dashboard</a><a href="/tags/AI-Agent/">#AI Agent</a><a href="/tags/%E8%AF%AD%E9%9F%B3%E4%BA%A4%E4%BA%92/">#语音交互</a></div><nav class="post-nav"><a href="/2026/05/18/restart/">重新开始记录 →</a></nav></article></main><footer class="cyber-footer"><div class="footer-line"></div><p>© 2026 cnsyl · https://cnsylbuild.top</p><p>Building tiny things with big curiosity.</p></footer></div><script src="/js/cyber.js"></script></body></html>
