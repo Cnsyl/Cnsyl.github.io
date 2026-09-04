@@ -1,6 +1,132 @@
 (() => {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const isMobile = window.matchMedia('(max-width: 720px)').matches
+  const hero = document.querySelector('.home-hero')
+  const heroVideo = hero && hero.querySelector('.home-hero-video')
+
+  if (hero && hero.dataset.heroPoster) {
+    hero.style.setProperty('--hero-poster-image', `url("${hero.dataset.heroPoster}")`)
+  }
+
+  const useHeroPoster = () => {
+    if (!hero) return
+    hero.classList.add('hero-static')
+    if (heroVideo) {
+      heroVideo.pause()
+      heroVideo.removeAttribute('autoplay')
+    }
+  }
+
+  // Keep a deterministic poster fallback for reduced-motion, mobile, and autoplay failures.
+  if (heroVideo) {
+    heroVideo.addEventListener('error', useHeroPoster, { once: true })
+    if (reduceMotion || isMobile) {
+      useHeroPoster()
+    } else {
+      const startVideo = () => {
+        const playRequest = heroVideo.play()
+        if (playRequest && typeof playRequest.catch === 'function') {
+          playRequest.catch(useHeroPoster)
+        }
+      }
+      // play() explicitly starts loading despite preload="none". This keeps
+      // mobile and no-JS poster fallbacks from downloading the film while
+      // preserving muted autoplay on capable desktop browsers.
+      startVideo()
+    }
+  }
+
+  const orbitNodes = hero ? hero.querySelectorAll('.orbit-node') : []
+  const orbitPanel = hero && hero.querySelector('.hero-side-note')
+  const orbitPanelIndex = orbitPanel && orbitPanel.querySelector('[data-orbit-index]')
+  const orbitPanelTitle = orbitPanel && orbitPanel.querySelector('[data-orbit-title]')
+  const orbitPanelDescription = orbitPanel && orbitPanel.querySelector('[data-orbit-description]')
+  const orbitPanelLink = orbitPanel && orbitPanel.querySelector('[data-orbit-link]')
+  const orbitPanelLinkLabel = orbitPanel && orbitPanel.querySelector('[data-orbit-link-label]')
+
+  const renderOrbitPanel = node => {
+    if (!orbitPanel) return
+    const data = node ? node.dataset : {
+      index: orbitPanel.dataset.defaultIndex,
+      title: orbitPanel.dataset.defaultTitle,
+      description: orbitPanel.dataset.defaultDescription,
+      linkLabel: orbitPanel.dataset.defaultLinkLabel
+    }
+    if (orbitPanelIndex) orbitPanelIndex.textContent = data.index || orbitPanel.dataset.defaultIndex
+    if (orbitPanelTitle) orbitPanelTitle.textContent = data.title || orbitPanel.dataset.defaultTitle
+    if (orbitPanelDescription) orbitPanelDescription.textContent = data.description || orbitPanel.dataset.defaultDescription
+    if (orbitPanelLink) orbitPanelLink.href = node ? node.href : orbitPanel.dataset.defaultHref
+    if (orbitPanelLinkLabel) orbitPanelLinkLabel.textContent = data.linkLabel || orbitPanel.dataset.defaultLinkLabel
+  }
+
+  const setOrbitActive = node => {
+    if (!hero || !node) return
+    const id = node.dataset.orbit
+    if (!id) return
+    hero.dataset.orbitActive = id
+    orbitNodes.forEach(item => item.classList.toggle('is-active', item === node))
+    renderOrbitPanel(node)
+  }
+
+  const clearOrbitActive = node => {
+    if (!hero || !node) return
+    // A blur from one node can arrive immediately after focus moves to the
+    // next node. Keep the newly focused node active instead of clearing the
+    // shared state from the stale blur callback.
+    const focusedNode = [...orbitNodes].find(item => item === document.activeElement)
+    if (hero.querySelector('.orbit-node:hover') || focusedNode) return
+    // Pointer hover and keyboard focus may have activated different nodes.
+    // Once neither input owns the state, clear the shared marker and every
+    // visual node together so the panel and highlighted rail cannot disagree.
+    delete hero.dataset.orbitActive
+    orbitNodes.forEach(item => item.classList.remove('is-active'))
+    renderOrbitPanel()
+  }
+
+  orbitNodes.forEach(node => {
+    node.addEventListener('pointerenter', () => setOrbitActive(node), { passive: true })
+    node.addEventListener('pointerleave', () => clearOrbitActive(node), { passive: true })
+    node.addEventListener('focus', () => setOrbitActive(node))
+    node.addEventListener('blur', () => {
+      window.setTimeout(() => clearOrbitActive(node), 0)
+    })
+  })
+
+  if (hero && !isMobile && !reduceMotion) {
+    let parallaxFrame = 0
+    let pointerX = 0
+    let pointerY = 0
+
+    const resetParallax = () => {
+      hero.style.setProperty('--hero-parallax-x', '0px')
+      hero.style.setProperty('--hero-parallax-y', '0px')
+      hero.style.setProperty('--hero-layer-x', '0px')
+      hero.style.setProperty('--hero-layer-y', '0px')
+    }
+
+    hero.addEventListener('pointermove', event => {
+      const rect = hero.getBoundingClientRect()
+      pointerX = ((event.clientX - rect.left) / rect.width - .5)
+      pointerY = ((event.clientY - rect.top) / rect.height - .5)
+      if (parallaxFrame) return
+      parallaxFrame = window.requestAnimationFrame(() => {
+        hero.style.setProperty('--hero-parallax-x', `${(pointerX * 12).toFixed(2)}px`)
+        hero.style.setProperty('--hero-parallax-y', `${(pointerY * 8).toFixed(2)}px`)
+        hero.style.setProperty('--hero-layer-x', `${(pointerX * 4).toFixed(2)}px`)
+        hero.style.setProperty('--hero-layer-y', `${(pointerY * 3).toFixed(2)}px`)
+        parallaxFrame = 0
+      })
+    }, { passive: true })
+
+    hero.addEventListener('pointerleave', () => {
+      if (parallaxFrame) {
+        window.cancelAnimationFrame(parallaxFrame)
+        parallaxFrame = 0
+      }
+      resetParallax()
+    }, { passive: true })
+  }
+
   if (reduceMotion) return
   document.documentElement.classList.add('js-enabled')
 
@@ -100,6 +226,17 @@
     })
   }
 
+  if (heroVideo && !isMobile) {
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        heroVideo.pause()
+      } else if (!hero.classList.contains('hero-static')) {
+        const playRequest = heroVideo.play()
+        if (playRequest && typeof playRequest.catch === 'function') playRequest.catch(useHeroPoster)
+      }
+    })
+  }
+
   const targets = document.querySelectorAll('.cyber-reveal, .lobster-section, .lobster-feature-card, .lobster-visual-card, .lobster-architecture-step')
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(entries => {
@@ -116,7 +253,7 @@
   }
 
   window.addEventListener('click', e => {
-    if (isMobile) return
+    if (isMobile || !e.target.closest('a, button')) return
     const ripple = document.createElement('span')
     ripple.className = 'cyber-ripple'
     ripple.style.left = `${e.clientX}px`
